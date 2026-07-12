@@ -17,3 +17,8 @@ To verify them yourself, you need only read the following four files:
 - `InducedMinorFreeSeparators/Defs.lean`
 - `Padding/Statements/RIGPaddedDecompDef.lean`
 - `Padding/MainRegionIntersection.lean`
+
+To build yourself, simply run
+```
+lake build
+```
