@@ -13,12 +13,6 @@ statement itself, see `Defs.lean`.
 * `QDual` - LP dual of Q(G) via fractional routings
 * Cover-vertex expansion (`coverBoundarySize`, `coverExpansion`)
 * Non-expansive embeddings (`IsNonExpansive`, `pairDistSum`, etc.)
-
-## References
-
-Based on "Separators of String Graphs, Region-Intersection Graphs, and
-Induced-Minor-Free Graphs, Revisited" by Davies, Rzążewski,
-Spalding-Jamieson, and Walczak.
 -/
 import Mathlib
 import Padding.EmbeddingDefs
