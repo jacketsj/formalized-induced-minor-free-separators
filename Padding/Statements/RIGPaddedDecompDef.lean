@@ -91,6 +91,11 @@ structure PaddedDecomp (X : Type u) (d : X → X → ℝ) (β δ Δ : ℝ) where
   partition : Ω → Partition X
   /-- Every sampled partition is `Δ`-bounded. -/
   bounded : ∀ ω, (partition ω).IsBounded d Δ
+  /-- For every fixed set `S` and point `z`, the event that `S` is contained in the
+  sampled cluster of `z` is measurable.  In particular, taking
+  `S = closedBall d z (γ * Δ)` gives measurability of every padding event below. -/
+  cluster_subset_measurable : ∀ (S : Set X) (z : X),
+    MeasurableSet {ω | S ⊆ (partition ω).cluster z}
   /-- For every `0 ≤ γ ≤ δ`, the ball of radius `γ * Δ` around each point is contained
   in that point's sampled cluster with probability at least `exp (-β * γ)`. -/
   padding : ∀ γ : ℝ, 0 ≤ γ → γ ≤ δ → ∀ z : X,

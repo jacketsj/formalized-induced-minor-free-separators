@@ -118,6 +118,7 @@ def PaddedDecomp.weaken_beta {X : Type u} [PseudoMetricSpace X] {β β' δ Δ : 
   hμ := pd.hμ
   partition := pd.partition
   bounded := pd.bounded
+  cluster_subset_measurable := pd.cluster_subset_measurable
   padding := fun γ hγ0 hγδ z => le_trans
     (by apply ENNReal.ofReal_le_ofReal; apply Real.exp_le_exp_of_le; nlinarith)
     (pd.padding γ hγ0 hγδ z)
@@ -133,6 +134,7 @@ def PaddedDecomp.weaken_delta {X : Type u} [PseudoMetricSpace X] {β δ δ' Δ :
   hμ := pd.hμ
   partition := pd.partition
   bounded := pd.bounded
+  cluster_subset_measurable := pd.cluster_subset_measurable
   padding := fun γ hγ0 hγδ z => pd.padding γ hγ0 (le_trans hγδ hle) z
 
 lemma AdmitsPaddedDecompScheme.weaken {X : Type u} [PseudoMetricSpace X]

@@ -215,29 +215,37 @@ lemma label_measurable (Δ : ℝ) (σ : Fin (Fintype.card X) ≃ X) (w : X) :
     exact Measurable.and ( measurableSet_le measurable_const ( rclamp_continuous Δ |> Continuous.measurable ) |> MeasurableSet.mem ) measurable_const
 
 /-
-For a fixed ordering `σ`, the set of radii for which `B(z, ρ)` is padded is measurable.
+For a fixed ordering `σ`, the set of radii for which a fixed set `S` is contained in
+the cluster of `z` is measurable.
 -/
-lemma event_section_measurable (Δ : ℝ) (ρ : ℝ) (z : X)
+lemma cluster_subset_event_section_measurable (Δ : ℝ) (S : Set X) (z : X)
     (σ : Fin (Fintype.card X) ≃ X) :
     MeasurableSet {R : ℝ |
-      Metric.closedBall z ρ ⊆ (bpart Δ (R, σ)).cluster z} := by
+      S ⊆ (bpart Δ (R, σ)).cluster z} := by
   simp +decide [ Set.subset_def, Partition.mem_cluster_iff ];
   refine' Measurable.forall fun x => Measurable.imp _ _;
   · exact measurable_const;
   · exact MeasurableSet.mem ( measurableSet_eq_fun ( label_measurable Δ σ x ) ( label_measurable Δ σ z ) )
 
 /-
-The padding event is measurable in the product σ-algebra.
+The event that a fixed set `S` is contained in the cluster of `z` is measurable in the
+product σ-algebra.
 -/
-lemma event_measurable (Δ : ℝ) (ρ : ℝ) (z : X) :
+lemma cluster_subset_event_measurable (Δ : ℝ) (S : Set X) (z : X) :
     MeasurableSet {ω : ℝ × (Fin (Fintype.card X) ≃ X) |
-      Metric.closedBall z ρ ⊆ (bpart Δ ω).cluster z} := by
+      S ⊆ (bpart Δ ω).cluster z} := by
   refine' MeasurableSet.congr _ _;
-  exact Set.iUnion fun σ : Fin ( Fintype.card X ) ≃ X => { R : ℝ | closedBall z ρ ⊆ ( bpart Δ ( R, σ ) ).cluster z } ×ˢ { σ };
+  exact Set.iUnion fun σ : Fin ( Fintype.card X ) ≃ X => { R : ℝ | S ⊆ ( bpart Δ ( R, σ ) ).cluster z } ×ˢ { σ };
   · convert MeasurableSet.iUnion _;
     · infer_instance;
-    · intro σ; exact MeasurableSet.prod ( event_section_measurable Δ ρ z σ ) ( MeasurableSet.of_discrete ) ;
+    · intro σ; exact MeasurableSet.prod ( cluster_subset_event_section_measurable Δ S z σ ) ( MeasurableSet.of_discrete ) ;
   · ext ⟨R, σ⟩; simp [Set.mem_iUnion]
+
+/-- The padding event is measurable in the product σ-algebra. -/
+lemma event_measurable (Δ : ℝ) (ρ : ℝ) (z : X) :
+    MeasurableSet {ω : ℝ × (Fin (Fintype.card X) ≃ X) |
+      Metric.closedBall z ρ ⊆ (bpart Δ ω).cluster z} :=
+  cluster_subset_event_measurable Δ (Metric.closedBall z ρ) z
 
 /-! ## The telescoping integral bound -/
 
@@ -418,6 +426,7 @@ def bartalDecomp (hn : 2 ≤ Fintype.card X) (Δ : ℝ) (hΔ : 0 < Δ) :
     infer_instance
   partition := bpart Δ
   bounded := fun ω => bpart_isBounded Δ hΔ ω
+  cluster_subset_measurable := cluster_subset_event_measurable Δ
   padding := fun γ hγ0 hγδ z => by
     have h := padding_key hn Δ hΔ γ hγ0 hγδ z
     simpa using h

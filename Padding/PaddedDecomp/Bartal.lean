@@ -128,6 +128,7 @@ lemma admitsScheme_subsingleton (X : Type u) [PseudoMetricSpace X] [Subsingleton
             apply Metric.ediam_le
             intro x _ y _; rw [show x = y from Subsingleton.elim x y, edist_self]
         _ ≤ ENNReal.ofReal Δ := zero_le _
+    cluster_subset_measurable := fun _ _ => MeasurableSet.of_discrete
     padding := fun γ _ _ z => by
       simp only [neg_zero, zero_mul, exp_zero, Partition.trivial_cluster]
       simp +decide [Set.subset_univ] }⟩
@@ -178,6 +179,7 @@ theorem bartal_padded_decomposition (X : Type u) [MetricSpace X] [Fintype X] :
           _ = ((n - 1) / (2 * n)) * Δ := by ring
           _ ≤ 1 * Δ := by apply mul_le_mul_of_nonneg_right h1 (le_of_lt hΔ)
           _ = Δ := one_mul Δ
+      cluster_subset_measurable := fun _ _ => MeasurableSet.of_discrete
       padding := fun γ hγ0 hγδ z => by
         -- γ * Δ ≤ r, so closedBall z (γ*Δ) ⊆ cluster z
         have hγr : γ * Δ ≤ r := by

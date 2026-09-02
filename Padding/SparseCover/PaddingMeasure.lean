@@ -351,6 +351,47 @@ lemma measurable_scOffset_coord {n : ℕ} (i : Fin n) :
     Measurable (fun ω : Fin n → ℝ => scOffset ω i) := by
   exact Measurable.max measurable_const ( Measurable.min measurable_const ( measurable_pi_apply i ) )
 
+lemma measurable_bestContainingCluster {X : Type*} [PseudoMetricSpace X] {n : ℕ}
+    (clusters : Fin n → Set X) (Δ β : ℝ)
+    (hcover : ∀ v : X, ∃ i : Fin n, v ∈ clusters i) (v : X) :
+    Measurable (fun ω : Fin n → ℝ =>
+      bestContainingCluster clusters (scOffset ω) Δ β v (hcover v)) := by
+  let containing := Finset.univ.filter (fun i : Fin n => v ∈ clusters i)
+  have hne : containing.Nonempty := by
+    obtain ⟨i, hi⟩ := hcover v
+    exact ⟨i, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hi⟩⟩
+  let score := fun i : Fin n => fun ω : Fin n → ℝ =>
+    sparseF (clusters i) (scOffset ω i) Δ β v
+  have hscore : ∀ i, Measurable (score i) := by
+    intro i
+    unfold score sparseF
+    exact (measurable_scOffset_coord i).mul_const (Δ / β) |>.add measurable_const
+  let maxScore := containing.sup' hne score
+  have hmax : Measurable maxScore := Finset.measurable_sup' hne fun i _ => hscore i
+  refine measurable_to_countable' fun i => ?_
+  have hresult : MeasurableSet {ω : Fin n → ℝ |
+      (i ∈ containing ∧ score i ω = maxScore ω) ∧
+        ∀ b : Fin n, (b ∈ containing ∧ score b ω = maxScore ω) → i ≤ b} := by
+    exact (Measurable.and
+      (Measurable.and measurable_const
+        (MeasurableSet.mem (measurableSet_eq_fun (hscore i) hmax)))
+      (Measurable.forall fun b =>
+        Measurable.imp (Measurable.and measurable_const
+          (MeasurableSet.mem (measurableSet_eq_fun (hscore b) hmax))) measurable_const)).setOf
+  change MeasurableSet {ω : Fin n → ℝ |
+    bestContainingCluster clusters (scOffset ω) Δ β v (hcover v) = i}
+  simpa only [bestContainingCluster, containing, score, maxScore, Finset.min'_eq_iff,
+    Finset.mem_filter, Finset.mem_univ, true_and, Finset.sup'_apply]
+    using hresult
+
+lemma measurable_scPartition_label {X : Type*} [PseudoMetricSpace X] {n : ℕ}
+    (clusters : Fin n → Set X) (Δ β : ℝ)
+    (hcover : ∀ v : X, ∃ i : Fin n, v ∈ clusters i) (v : X) :
+    Measurable (fun ω : Fin n → ℝ =>
+      (scPartition clusters (scOffset ω) Δ β hcover).label v) := by
+  exact (show Measurable (fun i : Fin n => i.val) by measurability).comp
+    (measurable_bestContainingCluster clusters Δ β hcover v)
+
 lemma measurableSet_scQset {X : Type*} [PseudoMetricSpace X] {n : ℕ}
     (clusters : Fin n → Set X) (Δ β : ℝ) (z : X) (gam : ℝ) (i : Fin n) :
     MeasurableSet (scQset clusters Δ β z gam i) := by
