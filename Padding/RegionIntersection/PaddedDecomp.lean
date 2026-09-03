@@ -204,6 +204,9 @@ private def ofMetricPaddedDecomp {X : Type u} [PseudoMetricSpace X] {β δ Δ : 
       Metric.dist_le_diam_of_mem hset_bdd hx' hy'
     exact le_trans hdist
       (PaddedDecomposition.Partition.IsBounded.diam_le (pd.bounded ω) hΔ z)
+  cluster_subset_measurable := by
+    intro S z
+    simpa using pd.cluster_subset_measurable S z
   padding := by
     intro γ hγ0 hγδ z
     simpa [closedBall] using pd.padding γ hγ0 hγδ z
@@ -222,6 +225,7 @@ private def PaddedDecomp.weaken_beta {X : Type u} {d : X → X → ℝ}
   hμ := pd.hμ
   partition := pd.partition
   bounded := pd.bounded
+  cluster_subset_measurable := pd.cluster_subset_measurable
   padding := by
     intro γ hγ0 hγδ z
     calc
@@ -243,6 +247,7 @@ private def PaddedDecomp.weaken_delta {X : Type u} {d : X → X → ℝ}
   hμ := pd.hμ
   partition := pd.partition
   bounded := pd.bounded
+  cluster_subset_measurable := pd.cluster_subset_measurable
   padding := fun γ hγ0 hγδ' z => pd.padding γ hγ0 (le_trans hγδ' hδ) z
 
 private theorem AdmitsPaddedDecompScheme.weaken {X : Type u} {d : X → X → ℝ}
@@ -429,6 +434,7 @@ private def endpointLightToEndpointHeavyPaddedDecomp {X : Type u} {dL dH : X →
     have hL := pd.bounded ω z x y hx hy
     have hH := hH_le_twoL x y
     nlinarith
+  cluster_subset_measurable := pd.cluster_subset_measurable
   padding := by
     intro γ hγ0 hγδ z
     let lightEvent :=

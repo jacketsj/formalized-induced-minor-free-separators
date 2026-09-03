@@ -47,7 +47,7 @@ The proof reindexes the cover's clusters by `Fin n` (`n = |ι|`), uses the produ
 separately: when `X` is empty, and when some cluster is the whole space (in which case the
 trivial partition already works). -/
 theorem sparse_cover_to_padded_decomp
-    (X : Type u) [PseudoMetricSpace X]
+    (X : Type u) [PseudoMetricSpace X] [Fintype X]
     (β : ℝ) (s : ℕ) (Δ : ℝ) (hβ : 0 < β) (hs : 1 ≤ s) (hΔ : 0 < Δ)
     (cover : SparseCover X β s Δ)
     (hbdd : ∀ i, Bornology.IsBounded (cover.cluster i)) :
@@ -95,7 +95,8 @@ theorem sparse_cover_to_padded_decomp
       rw [← not_nonempty_iff]; rintro ⟨v⟩
       exact absurd (hcontain v).choose.isLt (by omega)
     exact ⟨⟨ULift.{u} Unit, ⊤, Measure.dirac ⟨()⟩, Measure.dirac.isProbabilityMeasure,
-      fun _ => Partition.trivial, fun _ z => hXempty.elim z, fun γ _ _ z => hXempty.elim z⟩⟩
+      fun _ => Partition.trivial, fun _ z => hXempty.elim z,
+      fun _ _ => MeasurableSet.of_discrete, fun γ _ _ z => hXempty.elim z⟩⟩
   · haveI : NeZero n := ⟨hn0⟩
     by_cases hcompl : ∀ i : Fin n, (clusters i)ᶜ.Nonempty
     · -- Main case: all cluster complements are nonempty, apply `sc_padding_prob`.
@@ -112,6 +113,12 @@ theorem sparse_cover_to_padded_decomp
       refine ⟨⟨ULift.{u} (Fin n → ℝ), inferInstance, baseμ.comap dn, inferInstance,
         fun ω => scPartition clusters (scOffset ω.down) Δ β hcontain,
         fun ω => scPartition_bounded clusters (scOffset ω.down) Δ β hediam hcontain,
+        fun S z => by
+          simp only [Set.subset_def, Partition.mem_cluster_iff]
+          exact (Measurable.forall fun x => Measurable.imp measurable_const
+            (MeasurableSet.mem (measurableSet_eq_fun
+              ((measurable_scPartition_label clusters Δ β hcontain x).comp dn.measurable)
+              ((measurable_scPartition_label clusters Δ β hcontain z).comp dn.measurable)))).setOf,
         fun γ hγ0 hγδ z => ?_⟩⟩
       rw [Measure.toOuterMeasure_apply, MeasurableEmbedding.comap_apply dn.measurableEmbedding]
       have himg : (⇑dn) ''
@@ -136,7 +143,7 @@ theorem sparse_cover_to_padded_decomp
       have huniv : Metric.ediam (Set.univ : Set X) ≤ ENNReal.ofReal Δ := by
         rw [← hi]; exact hediam i
       refine ⟨⟨ULift.{u} Unit, ⊤, Measure.dirac ⟨()⟩, Measure.dirac.isProbabilityMeasure,
-        fun _ => Partition.trivial, ?_, ?_⟩⟩
+        fun _ => Partition.trivial, ?_, fun _ _ => MeasurableSet.of_discrete, ?_⟩⟩
       · intro _ z
         rw [Partition.trivial_cluster]; exact huniv
       · intro γ hγ0 hγδ z
@@ -154,7 +161,7 @@ theorem sparse_cover_to_padded_decomp
 /-- **Corollary**: A `(β, s)`-sparse cover scheme with bounded clusters implies a
 padded decomposition scheme. -/
 theorem sparse_cover_scheme_to_padded_decomp_scheme
-    (X : Type u) [PseudoMetricSpace X]
+    (X : Type u) [PseudoMetricSpace X] [Fintype X]
     (β : ℝ) (s : ℕ) (hβ : 0 < β) (hs : 1 ≤ s)
     (h : AdmitsSparseCoverScheme X β s)
     (hbdd : ∀ Δ > 0, ∀ cover : SparseCover X β s Δ,
