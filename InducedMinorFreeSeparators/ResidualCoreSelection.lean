@@ -21,7 +21,7 @@ def HasResidualTrichotomy (M : ℕ) (δ : ℝ) : Prop :=
 /-- The two non-minor outcomes of the residual structural trichotomy both
 produce a large set-valued core with a half-sized fixed neighborhood. -/
 theorem residual_trichotomy_gives_cores
-    (M : ℕ) (hM : 1 ≤ M) (δ : ℝ) (hδ : 0 < δ)
+    (M : ℕ) (_hM : 1 ≤ M) (δ : ℝ) (hδ : 0 < δ)
     (htri : HasResidualTrichotomy (X := X) M δ)
     (hsmall : ∀ c : X,
       2 * (Finset.univ.filter fun x : X => dist c x ≤ 12 * δ).card <

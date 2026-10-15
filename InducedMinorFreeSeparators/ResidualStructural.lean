@@ -40,7 +40,7 @@ theorem residual_vwsp_trichotomy
     (H : SimpleGraph (Fin h)) (hmH : H.edgeSet.ncard = m)
     (hfree : ¬HasInducedMinor_internal G (graphOneSubdiv H))
     (δ : ℝ) (hδ : 0 < δ) :
-    letI pms := vwspPMSLight G w hw hconn
+    letI := vwspPMSLight G w hw hconn
     HasResidualTrichotomy (X := V) (3 * h + m + 7) δ := by
   letI pms := vwspPMSLight G w hw hconn
   intro U hUlarge
@@ -104,7 +104,6 @@ theorem residual_vwsp_trichotomy
     have huR : (M : ℝ) ≤ U.card := by exact_mod_cast hUM
     have hcoef : (3 * h + m - 1 : ℕ) + 8 = M := by dsimp [M]; omega
     rw [← hcoef]
-    push_cast
     nlinarith [mul_add (nR : ℝ) (Z.card : ℝ) (M : ℝ)]
   have hnRpos : 0 < nR := by
     by_contra hz
@@ -123,7 +122,7 @@ theorem residual_vwsp_trichotomy
     · intro x₁ hx₁ x₂ hx₂ heq
       exact Subtype.ext heq
     · intro v hv
-      simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hv
+      simp only [Finset.mem_filter] at hv
       exact ⟨⟨v, hv.2⟩, by simp [hv.1], rfl⟩
   set μS := restrictedCountingMeasure T
   have hμS_univ : μS Set.univ = 1 := by

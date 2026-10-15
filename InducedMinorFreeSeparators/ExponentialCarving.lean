@@ -14,7 +14,7 @@ open PaddedDecomposition
 noncomputable section
 open Classical
 
-variable {X : Type*} [PseudoMetricSpace X] [Fintype X]
+variable {X : Type*} [PseudoMetricSpace X]
 
 /-- Signed distance works unchanged for pseudometrics (the version in the
 padding development is stated for metrics). -/
@@ -83,7 +83,7 @@ lemma core_subset_coreBall_zero (U K : Finset X) (hKU : K ⊆ U) :
 `5/4`.  The integer condition `M * 4^k ≤ 5^k` is the discrete form of
 `k = O(log M)`. -/
 theorem exists_thin_core_annulus
-    (N M k : ℕ) (hM : 1 ≤ M) (hk : 1 ≤ k)
+    (N M k : ℕ) (_hM : 1 ≤ M) (hk : 1 ≤ k)
     (hgrowth : M * 4 ^ k ≤ 5 ^ k)
     (U K : Finset X) (hKU : K ⊆ U) (hKne : K.Nonempty)
     (hcore : U.card < M * K.card)
@@ -355,15 +355,16 @@ private noncomputable def carving_fuel
           bad_bound := by simp
           fiber_small := by
             intro x hx
-            simp only [Finset.filter_true_of_mem]
             simpa using (Nat.le_of_not_gt hactive)
           padded := by simp
         }
 
+variable [Fintype X]
+
 /-- Deterministic set-core carving.  This is the metric content of Lemma 5.1,
 with the logarithmic scale encoded by `M * 4^k ≤ 5^k`. -/
 theorem core_carving_partition
-    (N M k : ℕ) (hN : N = Fintype.card X) (hN2 : 2 ≤ N)
+    (N M k : ℕ) (hN : N = Fintype.card X) (_hN2 : 2 ≤ N)
     (hM : 1 ≤ M) (hk : 1 ≤ k) (hgrowth : M * 4 ^ k ≤ 5 ^ k)
     (L : ℝ) (hL : 0 ≤ L)
     (cores : ∀ U : Finset X, N < 2 * U.card →
@@ -538,11 +539,12 @@ theorem coordinate_of_half_partition
         rfl
       rw [hfilter]
       convert mul_le_mul_of_nonneg_right hout'
-        (show 0 ≤ r / 2 * 2 ^ (labels.card - 1) by positivity) using 1 <;> ring
+        (show 0 ≤ r / 2 * 2 ^ (labels.card - 1) by positivity) using 1
+      all_goals ring
     rw [Finset.sum_comm]
     have hsum := Finset.sum_le_sum hper
     refine le_trans ?_ hsum
-    simp only [Finset.sum_const_zero, Finset.sum_const, nsmul_eq_mul]
+    simp only [Finset.sum_const, nsmul_eq_mul]
     have hr0 : 0 ≤ (Fintype.card X : ℝ) * r / 8 * 2 ^ labels.card := by positivity
     have hcast : (3 : ℝ) * Fintype.card X ≤ 4 * H₀.toFinset.card := by
       exact_mod_cast hHcard

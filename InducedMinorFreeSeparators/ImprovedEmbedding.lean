@@ -57,14 +57,18 @@ theorem logarithmic_vwsp_embedding_internal
         2 * (Finset.univ.filter fun x : V => dist c x ≤ 12 * δ).card <
           Fintype.card V := by
       intro c
-      convert hsmall c using 1 <;> dsimp [δ] <;> ring
+      convert hsmall c using 1
+      all_goals dsimp [δ]
+      all_goals ring_nf
     have htri : HasResidualTrichotomy (X := V) M δ := by
       simpa [M] using residual_vwsp_trichotomy G w hw hconn h m hh hm H hmH hfree δ hδ
     intro U hU
     obtain ⟨K, hKU, hKne, hKcard, hKball⟩ :=
       residual_trichotomy_gives_cores M (by omega) δ hδ htri hsmall' U hU
     refine ⟨K, hKU, hKne, hKcard, ?_⟩
-    convert hKball using 1 <;> dsimp [δ] <;> ring
+    convert hKball using 1
+    all_goals dsimp [δ]
+    all_goals ring_nf
   obtain ⟨f, hf, hsum⟩ :=
     logarithmic_rabinovich_of_core_selection M hM hn hcores
   refine ⟨f, ?_, ?_⟩

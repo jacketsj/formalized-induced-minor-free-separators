@@ -41,7 +41,7 @@ theorem graphOneSubdiv_has_original_induced_minor :
     rw [Set.disjoint_left]
     intro x hxu hxv
     rcases hxu with hxu | hxu <;> rcases hxv with hxv | hxv
-    · simp_all [subdivisionBranch]
+    · simp_all
     · obtain ⟨e, heq, _⟩ := hxv
       simp_all
     · obtain ⟨e, heq, _⟩ := hxu
