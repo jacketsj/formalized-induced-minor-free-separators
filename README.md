@@ -2,7 +2,7 @@ This project uses Lean 4 and mathlib to formalize the main theorems of the paper
 "Revisiting Separators in String Graphs, Region-Intersection Graphs, and Induced-Minor-Free Graphs"
 by Davies, Rzążewski, Spalding-Jamieson, and Walczak.
 
-To compile, insteall lean and then simply run
+To compile, install lean and then simply run
 ```sh
 lake build
 ```
@@ -24,8 +24,3 @@ To verify them yourself, you need only read the following four files:
 - `InducedMinorFreeSeparators/Defs.lean`
 - `Padding/Statements/RIGPaddedDecompDef.lean`
 - `Padding/MainRegionIntersection.lean`
-
-To build yourself, simply run
-```
-lake build
-```
